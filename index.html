@@ -40,15 +40,7 @@
     .product b{font-size:16px}.product small{color:var(--muted);display:block;margin-top:4px}.price{font-size:22px;font-weight:950;white-space:nowrap}
     .summary{margin-top:16px;background:#f9f7f2;border-radius:16px;padding:15px;display:grid;gap:10px}
     .row{display:flex;justify-content:space-between;gap:12px}.total{border-top:1px solid var(--line);padding-top:11px;font-size:20px;font-weight:950}
-    .btn{width:100%;border:0;border-radius:15px;padding:15px 16px;font:inherit;font-weight:900;display:flex;align-items:center;justify-content:center;gap:9px;margin-top:15px;cursor:pointer;background:var(--green);color:#fff;box-shadow:0 9px 23px rgba(32,169,87,.24);text-decoration:none;text-align:center}
-    .file-picker{position:relative;min-height:54px;border:2px dashed #dfc88f;background:#fff8e9;border-radius:14px;display:flex;align-items:center;justify-content:center;padding:13px;overflow:hidden}
-    .file-picker input[type="file"]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;z-index:2;padding:0;border:0}
-    .file-picker span{font-size:14px;font-weight:900;color:#5f4a1b;pointer-events:none}
-    .file-status{font-size:12px;color:var(--muted);line-height:1.4;word-break:break-word}
-    .receipt-preview{display:none;margin-top:4px;border-radius:13px;overflow:hidden;border:1px solid var(--line);background:#fafafa}
-    .receipt-preview img{display:block;width:100%;max-height:230px;object-fit:contain}
-    .share-file-btn{width:100%;border:1px solid #b9e2c7;border-radius:13px;padding:12px 14px;font:inherit;font-size:13px;font-weight:900;background:#eefaf2;color:#126837;cursor:pointer}
-    .share-file-btn:active{transform:translateY(1px)}
+    .btn{width:100%;border:0;border-radius:15px;padding:15px 16px;font:inherit;font-weight:900;display:flex;align-items:center;justify-content:center;gap:9px;margin-top:15px;cursor:pointer;background:var(--green);color:#fff;box-shadow:0 9px 23px rgba(32,169,87,.24)}
     .btn:active{transform:translateY(1px)}
     .note{text-align:center;color:var(--muted);font-size:12px;margin:12px 4px 0;line-height:1.45}
     .alert{display:none;background:#fff0ee;color:var(--red);border:1px solid #f0c2bb;border-radius:12px;padding:11px 12px;margin-bottom:13px;font-size:13px;font-weight:700}
@@ -97,16 +89,6 @@
         <div class="field"><label for="method">Modalidad *</label><select id="method"><option value="Retiro">Retiro</option><option value="Delivery">Delivery</option></select></div>
         <div class="field"><label for="payment">Forma de pago</label><select id="payment"><option>Pago móvil</option><option>Efectivo</option><option>Transferencia</option><option>Zelle</option><option>Por confirmar</option></select></div>
         <div id="paymentRefBox" class="field full"><label for="paymentRef">Número de referencia del pago móvil *</label><input id="paymentRef" inputmode="numeric" placeholder="Escribe el número de referencia"></div>
-        <div id="receiptBox" class="field full">
-          <label for="receipt">Comprobante de pago (imagen o PDF)</label>
-          <div class="file-picker">
-            <input id="receipt" type="file" accept="image/*,application/pdf,.pdf" aria-describedby="receiptStatus">
-            <span>📎 Agregar archivo</span>
-          </div>
-          <div id="receiptStatus" class="file-status">Ningún archivo seleccionado.</div>
-          <div id="receiptPreview" class="receipt-preview"></div>
-          <button id="shareReceiptBtn" class="share-file-btn hidden" type="button">📤 Compartir comprobante desde el teléfono</button>
-        </div>
         <div id="addressBox" class="field full hidden"><label for="address">Dirección de entrega *</label><textarea id="address" autocomplete="street-address" placeholder="Sector, calle y punto de referencia"></textarea></div>
         <div class="field"><label for="date">Fecha solicitada</label><input id="date" type="date"></div>
         <div class="field"><label for="time">Hora aproximada</label><input id="time" type="time"></div>
@@ -119,9 +101,9 @@
         <div class="row"><span>Delivery</span><strong id="sDelivery">Por confirmar</strong></div>
         <div class="row total"><span>Total de productos</span><strong id="sTotal">$6.00</strong></div>
       </div>
-      <a id="sendBtn" class="btn" href="https://wa.me/584247003512">💬 Abrir WhatsApp con el pedido</a>
+      <button id="sendBtn" class="btn" type="button">💬 Abrir WhatsApp y enviar pedido</button>
       <div id="fallback" class="fallback"><a id="fallbackLink" href="#" target="_blank" rel="noopener noreferrer">Abrir WhatsApp nuevamente</a><br><button id="copyBtn" type="button">Copiar el pedido</button></div>
-      <p class="note"><b>Destino del pedido:</b> WhatsApp afiliado <b>0424-7003512</b>.<br><b>Importante:</b> al abrirse WhatsApp, debes tocar el botón verde <b>Enviar</b>. El comprobante se comparte por separado con el botón “Compartir comprobante”, porque WhatsApp no permite adjuntarlo automáticamente desde una página web.</p>
+      <p class="note"><b>Destino del pedido:</b> WhatsApp afiliado <b>0424-7003512</b>.<br><b>Importante:</b> WhatsApp no permite enviar mensajes automáticamente desde una página. Al abrirse WhatsApp, debes tocar el botón verde <b>Enviar</b>. El pedido no se confirma hasta recibir respuesta del negocio.</p>
     </section>
     <div class="footer">NanyTequeño · Pedidos por WhatsApp</div>
   </main>
@@ -169,52 +151,12 @@
   function updatePaymentFields(){
     const isPagoMovil = $("payment").value === "Pago móvil";
     $("paymentRefBox").classList.toggle("hidden", !isPagoMovil);
-    $("receiptBox").classList.toggle("hidden", !isPagoMovil);
     $("paymentRef").required = isPagoMovil;
     if (!isPagoMovil) $("paymentRef").value = "";
   }
   $("payment").addEventListener("change", updatePaymentFields);
 
   let lastMessage = "";
-  let previewUrl = "";
-
-  function selectedReceipt(){
-    return $("receipt").files && $("receipt").files[0] ? $("receipt").files[0] : null;
-  }
-
-  $("receipt").addEventListener("change", () => {
-    const file = selectedReceipt();
-    const status = $("receiptStatus");
-    const preview = $("receiptPreview");
-    const shareButton = $("shareReceiptBtn");
-    if (previewUrl) {
-      URL.revokeObjectURL(previewUrl);
-      previewUrl = "";
-    }
-    preview.innerHTML = "";
-    preview.style.display = "none";
-    if (!file) {
-      status.textContent = "Ningún archivo seleccionado.";
-      shareButton.classList.add("hidden");
-      return;
-    }
-    if (file.size > 15 * 1024 * 1024) {
-      $("receipt").value = "";
-      status.textContent = "Ningún archivo seleccionado.";
-      shareButton.classList.add("hidden");
-      return showError("El comprobante supera 15 MB. Selecciona una imagen o PDF más liviano.");
-    }
-    status.textContent = `Archivo seleccionado: ${file.name}`;
-    shareButton.classList.remove("hidden");
-    if (file.type.startsWith("image/")) {
-      previewUrl = URL.createObjectURL(file);
-      const img = document.createElement("img");
-      img.src = previewUrl;
-      img.alt = "Vista previa del comprobante";
-      preview.appendChild(img);
-      preview.style.display = "block";
-    }
-  });
 
   function copyText(text){
     if (navigator.clipboard && window.isSecureContext) {
@@ -246,46 +188,23 @@
     }).catch(() => showError("No se pudo copiar. Mantén pulsado el mensaje en WhatsApp para copiarlo."));
   });
 
-  $("shareReceiptBtn").addEventListener("click", async () => {
-    clearError();
-    const file = selectedReceipt();
-    if (!file) return showError("Primero selecciona el comprobante con el botón Agregar archivo.");
-    const shareData = {
-      title: "Comprobante de pago - NanyTequeño",
-      text: lastMessage || "Comprobante de pago para mi pedido de NanyTequeño.",
-      files: [file]
-    };
-    if (!window.isSecureContext || !navigator.share || !navigator.canShare || !navigator.canShare({files:[file]})) {
-      return showError("Este navegador no permite compartir archivos directamente. Abre WhatsApp y adjunta el comprobante desde el clip 📎.");
-    }
-    try {
-      await navigator.share(shareData);
-    } catch (error) {
-      if (!error || error.name !== "AbortError") {
-        showError("No se pudo compartir el comprobante. Abre WhatsApp y adjúntalo desde el clip 📎.");
-      }
-    }
-  });
-
-  $("sendBtn").addEventListener("click", event => {
+  $("sendBtn").addEventListener("click", () => {
     clearError();
     const name = clean($("name").value);
     const phone = clean($("phone").value);
-    const qtyRaw = Number($("qty").value || 1);
-    const qty = Math.floor(qtyRaw);
+    const qty = Math.max(1, Math.floor(Number($("qty").value || 1)));
     const location = clean($("location").value);
     const method = $("method").value;
     const payment = $("payment").value;
     const paymentRef = clean($("paymentRef").value);
     const address = clean($("address").value);
-    if (!name) { event.preventDefault(); return showError("Escribe tu nombre y apellido."); }
-    if (!phone) { event.preventDefault(); return showError("Escribe tu número de WhatsApp."); }
-    if (!Number.isFinite(qtyRaw) || qty < 1 || qty > 100) { event.preventDefault(); return showError("La cantidad debe estar entre 1 y 100 bandejas."); }
-    if (!location) { event.preventDefault(); return showError("Escribe tu ubicación."); }
-    if (payment === "Pago móvil" && !paymentRef) { event.preventDefault(); return showError("Escribe el número de referencia del pago móvil."); }
-    if (method === "Delivery" && !address) { event.preventDefault(); return showError("Escribe la dirección para el delivery."); }
+    if (!name) return showError("Escribe tu nombre y apellido.");
+    if (!phone) return showError("Escribe tu número de WhatsApp.");
+    if (!Number.isFinite(qty) || qty < 1 || qty > 100) return showError("La cantidad debe estar entre 1 y 100 bandejas.");
+    if (!location) return showError("Escribe tu ubicación.");
+    if (payment === "Pago móvil" && !paymentRef) return showError("Escribe el número de referencia del pago móvil.");
+    if (method === "Delivery" && !address) return showError("Escribe la dirección para el delivery.");
 
-    const file = selectedReceipt();
     const id = makeId();
     const lines = [
       "🧀 *SOLICITUD DE TEQUEÑOS - NanyTequeño*",
@@ -304,7 +223,6 @@
       `💳 Forma de pago: ${payment}`,
       payment === "Pago móvil" ? `🏦 Datos de Pago Móvil: ${PAYMENT_DETAILS}` : "",
       payment === "Pago móvil" ? `🔢 Referencia del pago móvil: ${paymentRef}` : "",
-      payment === "Pago móvil" && file ? `📎 Comprobante seleccionado: ${file.name} (se enviará por separado)` : "",
       clean($("notes").value) ? `📝 Observaciones: ${clean($("notes").value)}` : "",
       method === "Delivery" ? "ℹ️ Costo del delivery: por confirmar" : "",
       "━━━━━━━━━━━━━━",
@@ -313,12 +231,13 @@
 
     lastMessage = lines.join("\n");
     const encodedMessage = encodeURIComponent(lastMessage);
-    const url = `https://wa.me/${BUSINESS_WHATSAPP}?text=${encodedMessage}`;
-    $("sendBtn").href = url;
+    const url = `https://api.whatsapp.com/send?phone=${BUSINESS_WHATSAPP}&text=${encodedMessage}`;
     $("fallbackLink").href = url;
     $("fallback").style.display = "block";
     $("success").style.display = "block";
-    // No se usa window.open ni una redirección por JavaScript: el enlace real es más compatible con móviles.
+
+    // Esta navegación ocurre dentro del clic del usuario, por lo que funciona en Android, iPhone y WhatsApp Web.
+    window.location.href = url;
   });
   updateSummary();
   updatePaymentFields();
